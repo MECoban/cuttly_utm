@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Cache files
+cuttly_cache.json
+
+# Environment
+.env
+.venv
+venv/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# MacOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
