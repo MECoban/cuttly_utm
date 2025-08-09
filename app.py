@@ -222,25 +222,45 @@ df = pd.DataFrame(data)
 # Tıklama sütununu sayısal yap
 df["Tıklama"] = pd.to_numeric(df["Tıklama"], errors='coerce').fillna(0).astype(int)
 
-st.markdown("### 📋 Link İstatistikleri")
-st.dataframe(
-    df, 
-    use_container_width=True,
-    hide_index=True,
-    column_config={
-        "Kaynak": st.column_config.TextColumn("Kaynak", width="large"),
-        "Kısa URL": st.column_config.LinkColumn("Kısa URL", width="large"),
-        "Tıklama": st.column_config.NumberColumn("Tıklama", format="%d", width="medium"),
-        "Son Güncelleme": st.column_config.TextColumn("Son Güncelleme", width="medium"),
-    }
+# Sidebar'da minimum tıklama filtresi
+st.sidebar.markdown("---")
+min_clicks = st.sidebar.number_input(
+    "🎯 Minimum Tıklama Filtresi", 
+    min_value=0, 
+    max_value=100, 
+    value=10, 
+    step=1,
+    help="Bu sayının altındaki linkler gizlenir"
 )
+
+# Filtreleme uygula
+df_filtered = df[df["Tıklama"] >= min_clicks].copy()
+total_links = len(df)
+filtered_links = len(df_filtered)
+
+st.markdown(f"### 📋 Link İstatistikleri ({filtered_links}/{total_links} link gösteriliyor)")
+
+if filtered_links == 0:
+    st.warning(f"⚠️ {min_clicks} tıklama ve üzerinde link bulunamadı. Filtreyi azaltın.")
+if filtered_links > 0:
+    st.dataframe(
+        df_filtered, 
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Kaynak": st.column_config.TextColumn("Kaynak", width="large"),
+            "Kısa URL": st.column_config.LinkColumn("Kısa URL", width="large"),
+            "Tıklama": st.column_config.NumberColumn("Tıklama", format="%d", width="medium"),
+            "Son Güncelleme": st.column_config.TextColumn("Son Güncelleme", width="medium"),
+        }
+    )
 
 # ---- Grafik ----
 if total_clicks > 0:
     st.markdown("### 📈 Tıklama Grafiği")
     
-    # En yüksek tıklanan linkler (top 10)
-    df_chart = df[df["Tıklama"] > 0].nlargest(10, "Tıklama")
+    # En yüksek tıklanan linkler (filtrelenmiş veriden top 10)
+    df_chart = df_filtered[df_filtered["Tıklama"] > 0].nlargest(10, "Tıklama")
     
     if not df_chart.empty:
         st.bar_chart(
@@ -254,5 +274,6 @@ if total_clicks > 0:
 st.markdown("---")
 st.markdown(
     "**💡 İpucu:** İlk çalıştırma ~6 dakika sürer (17 link × 21sn). "
-    "Sonraki yenilemeler cache sayesinde çok hızlıdır. Cache 1 saat geçerlidir."
+    "Sonraki yenilemeler cache sayesinde çok hızlıdır. Cache 1 saat geçerlidir. "
+    f"Şu anda {min_clicks}+ tıklamalı linkler gösteriliyor."
 )
