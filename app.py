@@ -20,7 +20,7 @@ st.set_page_config(
 )
 
 st.title("🔗 Cutt.ly Tıklama Dashboard")
-st.markdown("**Free Plan Uyumlu** - Tüm linkler sırayla güncellenir (20sn ara ile)")
+st.markdown("**Free Plan Uyumlu** - Tüm linkler sırayla güncellenir (21sn ara ile)")
 
 # Cache ayarları
 CACHE_PATH = Path("cuttly_cache.json")
