@@ -156,8 +156,8 @@ def load_data():
                     "Kısa URL": stats.get("shortLink") or item["short"],
                     "Tıklama": stats.get("clicks") or 0,
                     "Son Güncelleme": (
-                        time.strftime("%H:%M", time.localtime(cached.get("ts", 0))) 
-                        if cached else "—"
+                        f"{(now - cached.get('ts', 0)) // 60:.0f} dk önce" 
+                        if cached and cached.get('ts', 0) > 0 else "—"
                     )
                 }
                 results.append(result)
@@ -169,7 +169,7 @@ def load_data():
                     "Kaynak": item["name"],
                     "Kısa URL": item["short"],
                     "Tıklama": 0,
-                    "Son Güncelleme": "—"
+                    "Son Güncelleme": "Hata"
                 })
             
             # Progress güncelle
